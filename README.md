@@ -28,3 +28,10 @@
 8) **Save, Close**.
     
 9) **Congratulations**.
+
+# Usage (pretty ez)
+
+1) **get-imphash <file_path> -a <algorithm>** -> get-imphash c:\windows\system32\svchost.exe -a md5
+2) **get-imphash * --algorithm <algorithm>**  -> get-imphash * -a sha256
+3) **get-imphash --help**
+4) **Algorithms supported:** SHA1, SHA256, SHA512, MD5.
