@@ -38,8 +38,13 @@
 2) **get-ImpHash * --algorithm <algorithm>**
    
    > get-ImpHash * --algorithm sha256
-3) **get-imphash --help**
-4) **Algorithms supported:** SHA1, SHA256, SHA512, MD5.
+
+3) **get-ImpHash <file_path> -ShowTable**
+   
+   >Print the IAT Table as strings.
+   
+4) **get-imphash --help**
+5) **Algorithms supported:** SHA1, SHA256, SHA512, MD5.
 
 + ### Get-ExpHash Command:
 
@@ -49,5 +54,10 @@
 2) **get-ExpHash * --algorithm <algorithm>**
    
    > get-ExpHash * --algorithm sha256
-3) **get-ExpHash --help**
-4) **Algorithms supported:** SHA1, SHA256, SHA512, MD5.
+
+3) **get-ImpHash <file_path> -ShowTable**
+   
+   >Print the IAT Table as strings.
+   
+4) **get-ExpHash --help**
+5) **Algorithms supported:** SHA1, SHA256, SHA512, MD5.
