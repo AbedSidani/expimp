@@ -28,7 +28,7 @@
     
 9) **Congratulations**.
 
-# Usage (pretty ez)
+# Usage
 + ### Get-ImpHash Command:
 
 1) **get-ImpHash <file_path> -a <algorithm>**
