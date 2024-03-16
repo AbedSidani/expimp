@@ -1,4 +1,3 @@
-
 # *Get-ImpHash* & *Get-Exphash* because *Get-FileHash* is lonely.
 
 ### This Project simply gives you a quicker way of getting the **Import Hash (IAT)** hash & the **Export Hash (EAT)** Hash from your PowerShell Instance.
@@ -57,7 +56,7 @@
 
 3) **get-ImpHash <file_path> -ShowTable**
    
-   >Print the IAT Table as strings.
+   >Print the EAT Table as strings.
    
 4) **get-ExpHash --help**
 5) **Algorithms supported:** SHA1, SHA256, SHA512, MD5.
