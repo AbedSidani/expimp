@@ -7,7 +7,8 @@ function Get-ImpHash {
     param (
         [Parameter(Mandatory=$true, Position=0)]
         [string]$FilePath,
-        [string]$Algorithm = "sha256"
+        [string]$Algorithm = "sha256",
+        [switch]$ShowTable
     )
 
     if ($FilePath -eq "-h" -or $FilePath -eq "--help" -or $FilePath -eq "imphash--help") {
@@ -17,7 +18,7 @@ function Get-ImpHash {
 
     if ($FilePath -eq "*") {
         Get-ChildItem | ForEach-Object {
-            Get-ImpHash -FilePath $_.FullName -Algorithm $Algorithm
+            Get-ImpHash -FilePath $_.FullName -Algorithm $Algorithm -ShowTable:$ShowTable
         }
         return
     }
@@ -32,7 +33,7 @@ import sys
 import pefile
 import hashlib
 
-def calculate_hash(file_path, algorithm):
+def calculate_hash(file_path, algorithm, show_table):
     try:
         pe = pefile.PE(file_path)
         impstrs = []
@@ -65,16 +66,25 @@ def calculate_hash(file_path, algorithm):
                 if isinstance(funcname, bytes):
                     funcname = funcname.decode()
                 impstrs.append("%s.%s" % (libname.lower(), funcname.lower()))
+        
+        if show_table:
+            print("Import Address Table (IAT):")
+            for entry in impstrs:
+                print(entry)
+            print()  # Add newline after printing address table
+
         if algorithm.lower() == "md5":
-            return hashlib.md5(",".join(impstrs).encode()).hexdigest()
+            hash_val = hashlib.md5(",".join(impstrs).encode()).hexdigest()
         elif algorithm.lower() == "sha1":
-            return hashlib.sha1(",".join(impstrs).encode()).hexdigest()
+            hash_val = hashlib.sha1(",".join(impstrs).encode()).hexdigest()
         elif algorithm.lower() == "sha256":
-            return hashlib.sha256(",".join(impstrs).encode()).hexdigest()
+            hash_val = hashlib.sha256(",".join(impstrs).encode()).hexdigest()
         elif algorithm.lower() == "sha512":
-            return hashlib.sha512(",".join(impstrs).encode()).hexdigest()
+            hash_val = hashlib.sha512(",".join(impstrs).encode()).hexdigest()
         else:
             return "Invalid algorithm specified."
+        
+        return hash_val
 
     except pefile.PEFormatError:
         return "Not a valid PE file"
@@ -83,14 +93,15 @@ def calculate_hash(file_path, algorithm):
 
 file_path = sys.argv[1]
 algorithm = sys.argv[2]
-hash_val = calculate_hash(file_path, algorithm)
+show_table = sys.argv[3].lower() == "true"
+hash_val = calculate_hash(file_path, algorithm, show_table)
 print(hash_val)
 "@
 
     $pythonScriptPath = Join-Path -Path $env:TEMP -ChildPath "pe_hash_script.py"
     $pythonScript | Out-File -FilePath $pythonScriptPath -Encoding utf8
 
-    $pythonCommand = "python $pythonScriptPath ""$FilePath"" ""$Algorithm"""
+    $pythonCommand = "python $pythonScriptPath ""$FilePath"" ""$Algorithm"" ""$ShowTable"""
     $result = Invoke-Expression -Command $pythonCommand
 
     if ($result -like "Error:*") {
@@ -104,7 +115,8 @@ function Get-ExpHash {
     param (
         [Parameter(Mandatory=$true, Position=0)]
         [string]$FilePath,
-        [string]$Algorithm = "sha256"
+        [string]$Algorithm = "sha256",
+        [switch]$ShowTable
     )
 
     if ($FilePath -eq "-h" -or $FilePath -eq "--help" -or $FilePath -eq "exphash--help") {
@@ -114,7 +126,7 @@ function Get-ExpHash {
 
     if ($FilePath -eq "*") {
         Get-ChildItem | ForEach-Object {
-            Get-ExpHash -FilePath $_.FullName -Algorithm $Algorithm
+            Get-ExpHash -FilePath $_.FullName -Algorithm $Algorithm -ShowTable:$ShowTable
         }
         return
     }
@@ -126,35 +138,43 @@ function Get-ExpHash {
 
     $pythonScript = @"
 import sys
-import hashlib
 import pefile
+import hashlib
 
-def calculate_hash(file_path, algorithm):
+def calculate_hash(file_path, algorithm, show_table):
     try:
         pe = pefile.PE(file_path)
-        impstrs = []
+        expstrs = []
         exts = ["ocx", "sys", "dll"]
         if not hasattr(pe, "DIRECTORY_ENTRY_EXPORT"):
             return ""
-        if not hasattr(pe.DIRECTORY_ENTRY_EXPORT, "symbols"):
-            return ""
-        export_list = [
-            e.name.decode().lower()
-            for e in pe.DIRECTORY_ENTRY_EXPORT.symbols
-            if e and e.name is not None
-        ]
-        if len(export_list) == 0:
-            return ""
+        for exp in pe.DIRECTORY_ENTRY_EXPORT.symbols:
+            if isinstance(exp.name, bytes):
+                expname = exp.name.decode().lower()
+            else:
+                expname = exp.name.lower()
+            if isinstance(expname, bytes):
+                expname = expname.decode()
+            expstrs.append(expname)
+        
+        if show_table:
+            print("Export Address Table (EAT):")
+            for entry in expstrs:
+                print(entry)
+            print()  # Add newline after printing address table
+
         if algorithm.lower() == "md5":
-            return hashlib.md5(",".join(export_list).encode()).hexdigest()
+            hash_val = hashlib.md5(",".join(expstrs).encode()).hexdigest()
         elif algorithm.lower() == "sha1":
-            return hashlib.sha1(",".join(export_list).encode()).hexdigest()
+            hash_val = hashlib.sha1(",".join(expstrs).encode()).hexdigest()
         elif algorithm.lower() == "sha256":
-            return hashlib.sha256(",".join(export_list).encode()).hexdigest()
+            hash_val = hashlib.sha256(",".join(expstrs).encode()).hexdigest()
         elif algorithm.lower() == "sha512":
-            return hashlib.sha512(",".join(export_list).encode()).hexdigest()
+            hash_val = hashlib.sha512(",".join(expstrs).encode()).hexdigest()
         else:
             return "Invalid algorithm specified."
+        
+        return hash_val
 
     except pefile.PEFormatError:
         return "Not a valid PE file"
@@ -163,24 +183,24 @@ def calculate_hash(file_path, algorithm):
 
 file_path = sys.argv[1]
 algorithm = sys.argv[2]
-hash_val = calculate_hash(file_path, algorithm)
+show_table = sys.argv[3].lower() == "true"
+hash_val = calculate_hash(file_path, algorithm, show_table)
 print(hash_val)
 "@
 
     $pythonScriptPath = Join-Path -Path $env:TEMP -ChildPath "pe_hash_script.py"
     $pythonScript | Out-File -FilePath $pythonScriptPath -Encoding utf8
 
-    $pythonCommand = "python $pythonScriptPath ""$FilePath"" ""$Algorithm"""
+    $pythonCommand = "python $pythonScriptPath ""$FilePath"" ""$Algorithm"" ""$ShowTable"""
     $result = Invoke-Expression -Command $pythonCommand
 
     if ($result -like "Error:*") {
         Write-Host "Error: $result"
-    } elseif ([string]::IsNullOrWhiteSpace($result)) {
-        Write-Host "No export hash found."
     } else {
         Write-Host "$Algorithm`t$result`t$FilePath"
     }
 }
+
 
 function Show-Help {
     param (
@@ -193,8 +213,9 @@ function Show-Help {
         Write-Host "       Get-ImpHash * [-Algorithm <Algorithm>]"
 	Write-Host ""
         Write-Host "       --help -> Get the help manual"
-        Write-Host "       -a -> --algorithm (MD5, SHA1, SHA256, SHA512)"
+        Write-Host "       -a -> -algorithm (MD5, SHA1, SHA256, SHA512)"
 	Write-Host "        * -> Get the hash of all files in present directory."
+	Write-Host "        -ShowTable -> Print the IAT Table List."
 	Write-Host ""
     } elseif ($Command -eq "Get-ExpHash") {
         Write-Host ""
@@ -202,9 +223,12 @@ function Show-Help {
         Write-Host "       Get-ExpHash * [-Algorithm <Algorithm>]"
 	Write-Host ""
         Write-Host "       --help -> Get the help manual"
-        Write-Host "       -a -> --algorithm (MD5, SHA1, SHA256, SHA512)"
+        Write-Host "       -a -> -algorithm (MD5, SHA1, SHA256, SHA512)"
 	Write-Host "        * -> Get the hash of all files in present directory."
+	Write-Host "        -ShowTable -> Print the IAT Table List."
 	Write-Host ""
     }
 }
+
+
 
