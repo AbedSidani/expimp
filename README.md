@@ -30,10 +30,24 @@
 9) **Congratulations**.
 
 # Usage (pretty ez)
++ ### Get-ImpHash Command:
 
-1) **get-imphash <file_path> -a <algorithm>**
-   get-imphash c:\windows\system32\svchost.exe -a md5
-2) **get-imphash * --algorithm <algorithm>**
-   get-imphash * -a sha256
+1) **get-ImpHash <file_path> -a <algorithm>**
+   
+   > get-ImpHash c:\windows\system32\svchost.exe -a md5
+2) **get-ImpHash * --algorithm <algorithm>**
+   
+   > get-ImpHash * --algorithm sha256
 3) **get-imphash --help**
+4) **Algorithms supported:** SHA1, SHA256, SHA512, MD5.
+
++ ### Get-ExpHash Command:
+
+1) **get-ExpHash <file_path> -a <algorithm>**
+    
+   > get-ExpHash c:\windows\system32\svchost.exe -a md5
+2) **get-ExpHash * --algorithm <algorithm>**
+   
+   > get-ExpHash * --algorithm sha256
+3) **get-ExpHash --help**
 4) **Algorithms supported:** SHA1, SHA256, SHA512, MD5.
