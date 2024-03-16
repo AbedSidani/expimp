@@ -6,83 +6,138 @@
 function Get-ImpHash {
     param (
         [Parameter(Mandatory=$true, Position=0)]
-        [string]$FilePath
+        [string]$FilePath,
+        [string]$Algorithm = "sha256"
     )
+
+    if ($FilePath -eq "-h" -or $FilePath -eq "--help" -or $FilePath -eq "imphash--help") {
+        Show-Help "Get-ImpHash"
+        return
+    }
+
+    if ($FilePath -eq "*") {
+        Get-ChildItem | ForEach-Object {
+            Get-ImpHash -FilePath $_.FullName -Algorithm $Algorithm
+        }
+        return
+    }
 
     if (-not (Test-Path $FilePath)) {
         Write-Host "File not found: $FilePath"
-        exit
-    }
-
-    if ($ExportHash) {
-        $hashType = "Export"
-    } else {
-        $hashType = "Import"
+        return
     }
 
     $pythonScript = @"
 import sys
 import pefile
+import hashlib
 
-def calculate_hash(file_path, export_hash=False):
+def calculate_hash(file_path, algorithm):
     try:
         pe = pefile.PE(file_path)
-        if export_hash:
-            return "Export hash calculation is not supported."
+        impstrs = []
+        exts = ["ocx", "sys", "dll"]
+        if not hasattr(pe, "DIRECTORY_ENTRY_IMPORT"):
+            return ""
+        for entry in pe.DIRECTORY_ENTRY_IMPORT:
+            if isinstance(entry.dll, bytes):
+                libname = entry.dll.decode().lower()
+            else:
+                libname = entry.dll.lower()
+            parts = libname.rsplit(".", 1)
+            if len(parts) > 1 and parts[1] in exts:
+                libname = parts[0]
+            entry_dll_lower = entry.dll.lower()
+            for imp in entry.imports:
+                funcname = None
+                if not imp.name:
+                    funcname = ordlookup.ordLookup(
+                        entry_dll_lower, imp.ordinal, make_name=True
+                    )
+                    if not funcname:
+                        raise PEFormatError(
+                            f"Unable to look up ordinal {entry.dll}:{imp.ordinal:04x}"
+                        )
+                else:
+                    funcname = imp.name
+                if not funcname:
+                    continue
+                if isinstance(funcname, bytes):
+                    funcname = funcname.decode()
+                impstrs.append("%s.%s" % (libname.lower(), funcname.lower()))
+        if algorithm.lower() == "md5":
+            return hashlib.md5(",".join(impstrs).encode()).hexdigest()
+        elif algorithm.lower() == "sha1":
+            return hashlib.sha1(",".join(impstrs).encode()).hexdigest()
+        elif algorithm.lower() == "sha256":
+            return hashlib.sha256(",".join(impstrs).encode()).hexdigest()
+        elif algorithm.lower() == "sha512":
+            return hashlib.sha512(",".join(impstrs).encode()).hexdigest()
         else:
-            return pe.get_imphash()
+            return "Invalid algorithm specified."
+
     except pefile.PEFormatError:
         return "Not a valid PE file"
     except Exception as e:
         return "Error: " + str(e)
 
 file_path = sys.argv[1]
-export_hash = False
-if len(sys.argv) > 2 and sys.argv[2].lower() == "true":
-    export_hash = True
-hash_val = calculate_hash(file_path, export_hash)
+algorithm = sys.argv[2]
+hash_val = calculate_hash(file_path, algorithm)
 print(hash_val)
 "@
 
     $pythonScriptPath = Join-Path -Path $env:TEMP -ChildPath "pe_hash_script.py"
     $pythonScript | Out-File -FilePath $pythonScriptPath -Encoding utf8
 
-    $pythonCommand = "python $pythonScriptPath ""$FilePath"" $ExportHash"
+    $pythonCommand = "python $pythonScriptPath ""$FilePath"" ""$Algorithm"""
     $result = Invoke-Expression -Command $pythonCommand
 
     if ($result -like "Error:*") {
         Write-Host "Error: $result"
     } else {
-        Write-Host "$hashType Hash: $result"
+        Write-Host "$Algorithm`t$result`t$FilePath"
     }
 }
 
 function Get-ExpHash {
     param (
         [Parameter(Mandatory=$true, Position=0)]
-        [string]$FilePath
+        [string]$FilePath,
+        [string]$Algorithm = "sha256"
     )
+
+    if ($FilePath -eq "-h" -or $FilePath -eq "--help" -or $FilePath -eq "exphash--help") {
+        Show-Help "Get-ExpHash"
+        return
+    }
+
+    if ($FilePath -eq "*") {
+        Get-ChildItem | ForEach-Object {
+            Get-ExpHash -FilePath $_.FullName -Algorithm $Algorithm
+        }
+        return
+    }
 
     if (-not (Test-Path $FilePath)) {
         Write-Host "File not found: $FilePath"
-        exit
+        return
     }
-
-    $hashType = "Export"
 
     $pythonScript = @"
 import sys
 import hashlib
 import pefile
 
-def calculate_hash(file_path):
+def calculate_hash(file_path, algorithm):
     try:
         pe = pefile.PE(file_path)
+        impstrs = []
+        exts = ["ocx", "sys", "dll"]
         if not hasattr(pe, "DIRECTORY_ENTRY_EXPORT"):
             return ""
         if not hasattr(pe.DIRECTORY_ENTRY_EXPORT, "symbols"):
             return ""
-
         export_list = [
             e.name.decode().lower()
             for e in pe.DIRECTORY_ENTRY_EXPORT.symbols
@@ -90,8 +145,16 @@ def calculate_hash(file_path):
         ]
         if len(export_list) == 0:
             return ""
-
-        return hashlib.sha256(",".join(export_list).encode()).hexdigest()
+        if algorithm.lower() == "md5":
+            return hashlib.md5(",".join(export_list).encode()).hexdigest()
+        elif algorithm.lower() == "sha1":
+            return hashlib.sha1(",".join(export_list).encode()).hexdigest()
+        elif algorithm.lower() == "sha256":
+            return hashlib.sha256(",".join(export_list).encode()).hexdigest()
+        elif algorithm.lower() == "sha512":
+            return hashlib.sha512(",".join(export_list).encode()).hexdigest()
+        else:
+            return "Invalid algorithm specified."
 
     except pefile.PEFormatError:
         return "Not a valid PE file"
@@ -99,14 +162,15 @@ def calculate_hash(file_path):
         return "Error: " + str(e)
 
 file_path = sys.argv[1]
-hash_val = calculate_hash(file_path)
+algorithm = sys.argv[2]
+hash_val = calculate_hash(file_path, algorithm)
 print(hash_val)
 "@
 
     $pythonScriptPath = Join-Path -Path $env:TEMP -ChildPath "pe_hash_script.py"
     $pythonScript | Out-File -FilePath $pythonScriptPath -Encoding utf8
 
-    $pythonCommand = "python $pythonScriptPath ""$FilePath"""
+    $pythonCommand = "python $pythonScriptPath ""$FilePath"" ""$Algorithm"""
     $result = Invoke-Expression -Command $pythonCommand
 
     if ($result -like "Error:*") {
@@ -114,6 +178,33 @@ print(hash_val)
     } elseif ([string]::IsNullOrWhiteSpace($result)) {
         Write-Host "No export hash found."
     } else {
-        Write-Host "$hashType Hash: $result"
+        Write-Host "$Algorithm`t$result`t$FilePath"
     }
 }
+
+function Show-Help {
+    param (
+        [string]$Command
+    )
+
+    if ($Command -eq "Get-ImpHash") {
+	Write-Host ""
+        Write-Host "Usage: Get-ImpHash <FilePath> [-Algorithm <Algorithm>]"
+        Write-Host "       Get-ImpHash * [-Algorithm <Algorithm>]"
+	Write-Host ""
+        Write-Host "       --help -> Get the help manual"
+        Write-Host "       -a -> --algorithm (MD5, SHA1, SHA256, SHA512)"
+	Write-Host "        * -> Get the hash of all files in present directory."
+	Write-Host ""
+    } elseif ($Command -eq "Get-ExpHash") {
+        Write-Host ""
+	Write-Host "Usage: Get-ExpHash <FilePath> [-Algorithm <Algorithm>]"
+        Write-Host "       Get-ExpHash * [-Algorithm <Algorithm>]"
+	Write-Host ""
+        Write-Host "       --help -> Get the help manual"
+        Write-Host "       -a -> --algorithm (MD5, SHA1, SHA256, SHA512)"
+	Write-Host "        * -> Get the hash of all files in present directory."
+	Write-Host ""
+    }
+}
+
