@@ -35,9 +35,9 @@
 1) **get-ImpHash <file_path> -a <algorithm>**
    
    > get-ImpHash c:\windows\system32\svchost.exe -a md5
-2) **get-ImpHash * --algorithm <algorithm>**
+2) **get-ImpHash * -algorithm <algorithm>**
    
-   > get-ImpHash * --algorithm sha256
+   > get-ImpHash * -algorithm sha256
 
 3) **get-ImpHash <file_path> -ShowTable**
    
@@ -51,9 +51,9 @@
 1) **get-ExpHash <file_path> -a <algorithm>**
     
    > get-ExpHash c:\windows\system32\svchost.exe -a md5
-2) **get-ExpHash * --algorithm <algorithm>**
+2) **get-ExpHash * -algorithm <algorithm>**
    
-   > get-ExpHash * --algorithm sha256
+   > get-ExpHash * -algorithm sha256
 
 3) **get-ImpHash <file_path> -ShowTable**
    
