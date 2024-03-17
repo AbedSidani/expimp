@@ -43,7 +43,7 @@
    >Print the IAT Table as strings.
    
 4) **get-imphash --help**
-5) **Algorithms supported:** SHA1, SHA256, SHA512, MD5. (Default => MD5)
+5) **Supported Algorithms:** SHA1, SHA256, SHA512, MD5. (Default => MD5)
    
 # 
    
@@ -61,4 +61,4 @@
    >Print the EAT Table as strings.
    
 4) **get-ExpHash --help**
-5) **Algorithms supported:** SHA1, SHA256, SHA512, MD5. (Default => SHA256)
+5) **Supported Algorithms:** SHA1, SHA256, SHA512, MD5. (Default => SHA256)
