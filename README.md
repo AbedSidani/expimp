@@ -44,9 +44,9 @@
    
 4) **get-imphash --help**
 5) **Algorithms supported:** SHA1, SHA256, SHA512, MD5. (Default => MD5)
-
-
-
+   
+# 
+   
 + ### Get-ExpHash Command:
 
 1) **get-ExpHash <file_path> -algorithm <algorithm> -ShowTable -delimiter 'delimiter'**
