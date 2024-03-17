@@ -77,13 +77,13 @@ def calculate_hash(file_path, algorithm, delimiter, show_table):
             print()  # Add newline after printing address table
 
         if algorithm.lower() == "md5":
-            hash_val = hashlib.md5(delimiter.join(impstrs).encode()).hexdigest()
+            hash_val = hashlib.md5(",".join(impstrs).encode()).hexdigest()
         elif algorithm.lower() == "sha1":
-            hash_val = hashlib.sha1(delimiter.join(impstrs).encode()).hexdigest()
+            hash_val = hashlib.sha1(",".join(impstrs).encode()).hexdigest()
         elif algorithm.lower() == "sha256":
-            hash_val = hashlib.sha256(delimiter.join(impstrs).encode()).hexdigest()
+            hash_val = hashlib.sha256(",".join(impstrs).encode()).hexdigest()
         elif algorithm.lower() == "sha512":
-            hash_val = hashlib.sha512(delimiter.join(impstrs).encode()).hexdigest()
+            hash_val = hashlib.sha512(",".join(impstrs).encode()).hexdigest()
         else:
             return "Invalid algorithm specified."
 
@@ -99,6 +99,8 @@ algorithm = sys.argv[2]
 delimiter = sys.argv[3]
 show_table = sys.argv[4].lower() == "true"
 hash_val = calculate_hash(file_path, algorithm, delimiter, show_table)
+print()
+print()
 print(hash_val)
 "@
 
@@ -112,7 +114,6 @@ print(hash_val)
         Write-Host "Error: $result"
     } else {
         if ($ShowTable) {
-
             Write-Host ""
         }
         Write-Host "$Algorithm`t$result`t$FilePath"
@@ -175,13 +176,13 @@ def calculate_hash(file_path, algorithm, delimiter, show_table):
             print()  # Add newline after printing address table
 
         if algorithm.lower() == "md5":
-            hash_val = hashlib.md5(delimiter.join(expstrs).encode()).hexdigest()
+            hash_val = hashlib.md5(",".join(expstrs).encode()).hexdigest()
         elif algorithm.lower() == "sha1":
-            hash_val = hashlib.sha1(delimiter.join(expstrs).encode()).hexdigest()
+            hash_val = hashlib.sha1(",".join(expstrs).encode()).hexdigest()
         elif algorithm.lower() == "sha256":
-            hash_val = hashlib.sha256(delimiter.join(expstrs).encode()).hexdigest()
+            hash_val = hashlib.sha256(",".join(expstrs).encode()).hexdigest()
         elif algorithm.lower() == "sha512":
-            hash_val = hashlib.sha512(delimiter.join(expstrs).encode()).hexdigest()
+            hash_val = hashlib.sha512(",".join(expstrs).encode()).hexdigest()
         else:
             return "Invalid algorithm specified."
 
@@ -212,7 +213,6 @@ print(hash_val)
         Write-Host "Error: $result"
     } else {
         if ($ShowTable) {
-
             Write-Host ""
         }
         Write-Host "$Algorithm`t$result`t$FilePath"
