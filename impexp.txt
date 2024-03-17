@@ -7,7 +7,7 @@ function Get-ImpHash {
     param (
         [Parameter(Mandatory=$true, Position=0)]
         [string]$FilePath,
-        [string]$Algorithm = "sha256",
+        [string]$Algorithm = "md5",
         [switch]$ShowTable
     )
 
@@ -115,7 +115,7 @@ function Get-ExpHash {
     param (
         [Parameter(Mandatory=$true, Position=0)]
         [string]$FilePath,
-        [string]$Algorithm = "sha256",
+        [string]$Algorithm = "md5",
         [switch]$ShowTable
     )
 
