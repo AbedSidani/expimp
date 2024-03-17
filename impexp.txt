@@ -115,7 +115,10 @@ print(hash_val)
     } else {
         if ($ShowTable) {
             Write-Host ""
+			Write-Host ""
         }
+		Write-Host ""
+		Write-Host ""
         Write-Host "$Algorithm`t$result`t$FilePath"
     }
 }
@@ -214,7 +217,43 @@ print(hash_val)
     } else {
         if ($ShowTable) {
             Write-Host ""
+			Write-Host ""
         }
+		Write-Host ""
+		Write-Host ""
         Write-Host "$Algorithm`t$result`t$FilePath"
     }
 }
+
+function Show-Help {
+    param (
+        [string]$Command
+    )
+
+    if ($Command -eq "Get-ImpHash") {
+        Write-Host ""
+        Write-Host "Usage: Get-ImpHash <FilePath> [-Algorithm <Algorithm>] [-Delimiter <Delimiter>]"
+		Write-Host "Usage: Get-ImpHash svchost.exe -a sha256 -ShowTable -d ' | '"
+        Write-Host "       Get-ImpHash * [-Algorithm <Algorithm>] [-Delimiter <Delimiter>]"
+        Write-Host ""
+        Write-Host "       --help -> Get the help manual"
+        Write-Host "       -a -> -algorithm (MD5, SHA1, SHA256, SHA512) , Default: Md5"
+        Write-Host "       -d -> -delimiter (space, comma, tab, etc.)"
+        Write-Host "        * -> Get the hash of all files in present directory."
+        Write-Host "        -ShowTable -> Print the IAT Table List."
+        Write-Host ""
+    } elseif ($Command -eq "Get-ExpHash") {
+        Write-Host ""
+        Write-Host "Usage: Get-ExpHash <FilePath> [-Algorithm <Algorithm>] [-Delimiter <Delimiter>]"
+		Write-Host "Usage: Get-ExpHash svchost.exe -a md5 -ShowTable -d ' | '"
+        Write-Host "       Get-ExpHash * [-Algorithm <Algorithm>] [-Delimiter <Delimiter>]"
+        Write-Host ""
+        Write-Host "       --help -> Get the help manual"
+        Write-Host "       -a -> -algorithm (MD5, SHA1, SHA256, SHA512) , Default: SHA256"
+        Write-Host "       -d -> -delimiter (space, comma, tab, etc.)"
+        Write-Host "        * -> Get the hash of all files in present directory."
+        Write-Host "        -ShowTable -> Print the EAT Table List."
+        Write-Host ""
+    }
+}
+
