@@ -124,7 +124,7 @@ function Get-ExpHash {
     param (
         [Parameter(Mandatory=$true, Position=0)]
         [string]$FilePath,
-        [string]$Algorithm = "md5",
+        [string]$Algorithm = "sha256",
         [string]$Delimiter = " ",
         [switch]$ShowTable
     )
