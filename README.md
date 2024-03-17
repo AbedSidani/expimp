@@ -31,7 +31,7 @@
 # Usage
 + ### Get-ImpHash Command:
 
-1) **get-ImpHash <file_path> -a <algorithm> -ShowTable -d 'delimiter'**
+1) **get-ImpHash <file_path> -algorithm <algorithm> -ShowTable -delimiter 'delimiter'**
    
    > get-ImpHash c:\windows\system32\svchost.exe -a sha256 -ShowTable -d ' | '
 2) **get-ImpHash * -algorithm <algorithm>**
@@ -45,9 +45,11 @@
 4) **get-imphash --help**
 5) **Algorithms supported:** SHA1, SHA256, SHA512, MD5. (Default => MD5)
 
+
+
 + ### Get-ExpHash Command:
 
-1) **get-ExpHash <file_path> -a <algorithm> -ShowTable -d 'delimiter'**
+1) **get-ExpHash <file_path> -algorithm <algorithm> -ShowTable -delimiter 'delimiter'**
     
    > get-ExpHash c:\windows\system32\kernel32.dll -a sha256 -ShowTable -d ' | '
 2) **get-ExpHash * -algorithm <algorithm>**
