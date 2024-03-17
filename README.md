@@ -31,9 +31,9 @@
 # Usage
 + ### Get-ImpHash Command:
 
-1) **get-ImpHash <file_path> -a <algorithm>**
+1) **get-ImpHash <file_path> -a <algorithm> -ShowTable -d 'delimiter'**
    
-   > get-ImpHash c:\windows\system32\svchost.exe -a md5
+   > get-ImpHash c:\windows\system32\svchost.exe -a sha256 -ShowTable -d ' | '
 2) **get-ImpHash * -algorithm <algorithm>**
    
    > get-ImpHash * -algorithm sha256
@@ -43,13 +43,13 @@
    >Print the IAT Table as strings.
    
 4) **get-imphash --help**
-5) **Algorithms supported:** SHA1, SHA256, SHA512, MD5.
+5) **Algorithms supported:** SHA1, SHA256, SHA512, MD5. (Default => MD5)
 
 + ### Get-ExpHash Command:
 
-1) **get-ExpHash <file_path> -a <algorithm>**
+1) **get-ExpHash <file_path> -a <algorithm> -ShowTable -d 'delimiter'**
     
-   > get-ExpHash c:\windows\system32\svchost.exe -a md5
+   > get-ExpHash c:\windows\system32\kernel32.dll -a sha256 -ShowTable -d ' | '
 2) **get-ExpHash * -algorithm <algorithm>**
    
    > get-ExpHash * -algorithm sha256
@@ -59,4 +59,4 @@
    >Print the EAT Table as strings.
    
 4) **get-ExpHash --help**
-5) **Algorithms supported:** SHA1, SHA256, SHA512, MD5.
+5) **Algorithms supported:** SHA1, SHA256, SHA512, MD5. (Default => SHA256)
