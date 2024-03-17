@@ -31,34 +31,34 @@
 # Usage
 + ### Get-ImpHash Command:
 
-1) **get-ImpHash <file_path> -algorithm <algorithm> -ShowTable -delimiter 'delimiter'**
+1) **Get-ImpHash <file_path> -algorithm <algorithm> -ShowTable -delimiter 'delimiter'**
    
-   > get-ImpHash c:\windows\system32\svchost.exe -a sha256 -ShowTable -d ' | '
-2) **get-ImpHash * -algorithm <algorithm>**
+   > Get-ImpHash c:\windows\system32\svchost.exe -a sha256 -ShowTable -d ' | '
+2) **Get-ImpHash * -algorithm <algorithm>**
    
-   > get-ImpHash * -algorithm sha256
+   > Get-ImpHash * -algorithm sha256
 
-3) **get-ImpHash <file_path> -ShowTable**
+3) **Get-ImpHash <file_path> -ShowTable**
    
-   >Print the IAT Table as strings.
+   >Print the IAT Table as strings. (Default print is seperated by spaces, add Delimiter '-d' to print the list the way you like)
    
-4) **get-imphash --help**
+4) **Get-ImpHash --help**
 5) **Supported Algorithms:** SHA1, SHA256, SHA512, MD5. (Default => MD5)
    
 # 
    
 + ### Get-ExpHash Command:
 
-1) **get-ExpHash <file_path> -algorithm <algorithm> -ShowTable -delimiter 'delimiter'**
+1) **Get-ExpHash <file_path> -algorithm <algorithm> -ShowTable -delimiter 'delimiter'**
     
-   > get-ExpHash c:\windows\system32\kernel32.dll -a sha256 -ShowTable -d ' | '
-2) **get-ExpHash * -algorithm <algorithm>**
+   > Get-ExpHash c:\windows\system32\kernel32.dll -a sha256 -ShowTable -d ' | '
+2) **Get-ExpHash * -algorithm <algorithm>**
    
-   > get-ExpHash * -algorithm sha256
+   > Get-ExpHash * -algorithm sha256
 
-3) **get-ImpHash <file_path> -ShowTable**
+3) **Get-ImpHash <file_path> -ShowTable**
    
-   >Print the EAT Table as strings.
+   >Print the EAT Table as strings. (Default print is seperated by spaces, add Delimiter '-d' to print the list the way you like)
    
-4) **get-ExpHash --help**
+4) **Get-ExpHash --help**
 5) **Supported Algorithms:** SHA1, SHA256, SHA512, MD5. (Default => SHA256)
