@@ -68,10 +68,8 @@ def calculate_hash(file_path, algorithm, delimiter, show_table):
                     funcname = funcname.decode()
                 impstrs.append("%s.%s" % (libname.lower(), funcname.lower()))
 
-        if show_table:
-            impstrs_str = delimiter.join(impstrs)  # Join import strings with the specified delimiter
-        else:
-            impstrs_str = "".join(impstrs)  # Join import strings without separators
+        impstrs_str = ",".join(impstrs)  # Join import strings with commas
+        impstrs_display = delimiter.join(impstrs) if show_table else impstrs_str  # Join with custom delimiter for display
 
         if algorithm.lower() == "md5":
             hash_val = hashlib.md5(impstrs_str.encode()).hexdigest()
@@ -84,7 +82,7 @@ def calculate_hash(file_path, algorithm, delimiter, show_table):
         else:
             return "Invalid algorithm specified."
 
-        return hash_val, impstrs_str
+        return hash_val, impstrs_display
 
     except pefile.PEFormatError:
         return "Not a valid PE file", ""
@@ -114,7 +112,7 @@ print(impstrs_str)
         Write-Host "Error: $hash"
     } else {
         if ($ShowTable) {
-            Write-Host "IAT Table: `"$impstrs`""
+            Write-Host "IAT Table:`n`"$impstrs`""
         }
 
         Write-Host "$Algorithm`t$hash`t$FilePath"
@@ -148,6 +146,7 @@ function Get-ExpHash {
     }
 
     $pythonScript = @"
+
 import sys
 import pefile
 import hashlib
@@ -168,10 +167,8 @@ def calculate_hash(file_path, algorithm, delimiter, show_table):
                 expname = expname.decode()
             expstrs.append(expname)
 
-        if show_table:
-            expstrs_str = delimiter.join(expstrs)  # Join export strings with the specified delimiter
-        else:
-            expstrs_str = "".join(expstrs)  # Join export strings without separators
+        expstrs_str = ",".join(expstrs)  # Join export strings with commas
+        expstrs_display = delimiter.join(expstrs) if show_table else expstrs_str  # Join with custom delimiter for display
 
         if algorithm.lower() == "md5":
             hash_val = hashlib.md5(expstrs_str.encode()).hexdigest()
@@ -184,7 +181,7 @@ def calculate_hash(file_path, algorithm, delimiter, show_table):
         else:
             return "Invalid algorithm specified."
 
-        return hash_val, expstrs_str
+        return hash_val, expstrs_display
 
     except pefile.PEFormatError:
         return "Not a valid PE file", ""
@@ -214,7 +211,7 @@ print(expstrs_str)
         Write-Host "Error: $hash"
     } else {
         if ($ShowTable) {
-            Write-Host "EAT Table: `"$expstrs`""
+            Write-Host "EAT Table:`n`"$expstrs`""
         }
 
         Write-Host "$Algorithm`t$hash`t$FilePath"
@@ -250,4 +247,3 @@ function Show-Help {
         Write-Host ""
     }
 }
-
