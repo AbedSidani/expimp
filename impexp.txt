@@ -1,3 +1,4 @@
+#This project is mainly for simplicity and to have quick access to the imphash, exphash was made for fun...
 #If you are reading this, you have passed the static analysis check.
 #Achievement Unlocked: Read the code before you execute the code.
 #Experience: +50 points
