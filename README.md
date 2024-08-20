@@ -34,6 +34,10 @@
 1) **Get-ImpHash <file_path> -algorithm <algorithm> -ShowTable -delimiter 'delimiter'**
    
    > Get-ImpHash c:\windows\system32\svchost.exe -a sha256 -ShowTable -d ' | '
+   
+![image](https://github.com/user-attachments/assets/b3288b11-4204-4271-9cdd-8c8d8b9319d8)
+
+   
 2) **Get-ImpHash * -algorithm <algorithm>**
    
    > Get-ImpHash * -algorithm sha256
